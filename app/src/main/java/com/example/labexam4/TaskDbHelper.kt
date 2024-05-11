@@ -36,4 +36,23 @@ class TaskDbHelper (context: Context) : SQLiteOpenHelper (context, DATABASE_NAME
         db.insert(TABLE_NAME, null, values)
         db.close()
     }
+
+    fun getAllTasks(): List<Task> {
+        val tasksList = mutableListOf<Task>()
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME"
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
+            val task = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASK))
+            val content = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT))
+
+            val t = Task(id, task, content)
+            tasksList.add(t)
+        }
+        cursor.close()
+        db.close()
+        return tasksList
+    }
 }
